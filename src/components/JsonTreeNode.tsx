@@ -75,6 +75,10 @@ export const JsonTreeNode: React.FC<JsonTreeNodeProps> = memo(({
     toast.success('Value copied to clipboard');
   }, [value, type]);
 
+  const isValueHighlighted = searchHighlight && 
+    !isExpandable && 
+    String(value).toLowerCase().includes(searchHighlight.toLowerCase());
+
   const renderValue = () => {
     if (!isExpandable) {
       let valueClass = '';
@@ -92,7 +96,11 @@ export const JsonTreeNode: React.FC<JsonTreeNodeProps> = memo(({
           valueClass = 'text-syntax-null';
           break;
       }
-      return <span className={cn('font-mono', valueClass)}>{getValuePreview(value, type)}</span>;
+      return (
+        <span className={cn('font-mono', valueClass, isValueHighlighted && 'bg-success/30 px-1 rounded')}>
+          {getValuePreview(value, type)}
+        </span>
+      );
     }
     return (
       <span className="text-muted-foreground font-mono text-xs">
