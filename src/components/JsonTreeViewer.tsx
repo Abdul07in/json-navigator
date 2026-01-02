@@ -8,11 +8,12 @@ interface JsonTreeViewerProps {
   data: unknown;
   className?: string;
   searchHighlight?: string;
+  focusedResultPath?: string | null;
 }
 
 const getAllPaths = (obj: unknown, path: string = '$'): string[] => {
   const paths: string[] = [path];
-  
+
   if (Array.isArray(obj)) {
     obj.forEach((item, index) => {
       if (typeof item === 'object' && item !== null) {
@@ -26,7 +27,7 @@ const getAllPaths = (obj: unknown, path: string = '$'): string[] => {
       }
     });
   }
-  
+
   return paths;
 };
 
@@ -34,10 +35,78 @@ export const JsonTreeViewer: React.FC<JsonTreeViewerProps> = ({
   data,
   className,
   searchHighlight,
+  focusedResultPath,
 }) => {
   const [expandedPaths, setExpandedPaths] = useState<Set<string>>(() => new Set(['$']));
 
   const allPaths = useMemo(() => getAllPaths(data), [data]);
+
+  const getExpandedPathsForSearch = useCallback((data: unknown, query: string, path: string = '$'): Set<string> => {
+    const paths = new Set<string>();
+    const lowerQuery = query.toLowerCase();
+
+    if (Array.isArray(data)) {
+      data.forEach((item, index) => {
+        const currentPath = `${path}[${index}]`;
+        let shouldExpand = false;
+
+        // Check if value matches
+        if (String(item).toLowerCase().includes(lowerQuery)) {
+          shouldExpand = true;
+        }
+
+        // Recursive check for objects/arrays
+        if (typeof item === 'object' && item !== null) {
+          const childPaths = getExpandedPathsForSearch(item, query, currentPath);
+          if (childPaths.size > 0) {
+            shouldExpand = true;
+            childPaths.forEach(p => paths.add(p));
+          }
+        }
+
+        if (shouldExpand) {
+          paths.add(path);
+        }
+      });
+    } else if (typeof data === 'object' && data !== null) {
+      Object.entries(data).forEach(([key, value]) => {
+        const currentPath = `${path}.${key}`;
+        let shouldExpand = false;
+
+        // Check if key or value matches
+        if (key.toLowerCase().includes(lowerQuery) || String(value).toLowerCase().includes(lowerQuery)) {
+          shouldExpand = true;
+        }
+
+        if (typeof value === 'object' && value !== null) {
+          const childPaths = getExpandedPathsForSearch(value, query, currentPath);
+          if (childPaths.size > 0) {
+            shouldExpand = true;
+            childPaths.forEach(p => paths.add(p));
+          }
+        }
+
+        if (shouldExpand) {
+          paths.add(path);
+        }
+      });
+    }
+
+    return paths;
+  }, []);
+
+  React.useEffect(() => {
+    if (searchHighlight && searchHighlight.length > 0) {
+      const searchPaths = getExpandedPathsForSearch(data, searchHighlight);
+      if (searchPaths.size > 0) {
+        setExpandedPaths(prev => {
+          const next = new Set(prev);
+          searchPaths.forEach(path => next.add(path));
+          return next;
+        });
+      }
+    }
+  }, [searchHighlight, data, getExpandedPathsForSearch]);
 
   const handleToggle = useCallback((path: string) => {
     setExpandedPaths(prev => {
@@ -61,8 +130,23 @@ export const JsonTreeViewer: React.FC<JsonTreeViewerProps> = ({
 
   const breadcrumb = useMemo(() => {
     const expanded = Array.from(expandedPaths).sort((a, b) => b.length - a.length);
-    return expanded[0] || '$';
+    if (expanded.length === 0) return '$';
+    return expanded[0];
   }, [expandedPaths]);
+
+  React.useEffect(() => {
+    if (focusedResultPath) {
+      // Small delay to ensure render is complete
+      setTimeout(() => {
+        // Escape single quotes for the attribute selector
+        const safePath = focusedResultPath.replace(/'/g, "\\'");
+        const element = document.querySelector(`[data-path='${safePath}']`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    }
+  }, [focusedResultPath]);
 
   if (!data) {
     return (
@@ -103,6 +187,7 @@ export const JsonTreeViewer: React.FC<JsonTreeViewerProps> = ({
           expandedPaths={expandedPaths}
           onToggle={handleToggle}
           searchHighlight={searchHighlight}
+          focusedResultPath={focusedResultPath}
         />
       </div>
     </div>

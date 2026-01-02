@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 
 export const Header: React.FC = () => {
   const location = useLocation();
-  
+
   return (
     <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-card/50 backdrop-blur-sm">
       <div className="flex items-center gap-6">
@@ -16,7 +16,7 @@ export const Header: React.FC = () => {
           </div>
           <div>
             <h1 className="text-lg font-semibold text-foreground flex items-center gap-2">
-              JSON Viewer
+              JsonNavigator
               <span className="text-xs px-2 py-0.5 bg-primary/20 text-primary rounded-full font-medium">
                 Pro
               </span>

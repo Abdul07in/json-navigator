@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Code, TreePine, BarChart3 } from 'lucide-react';
 
 const sampleJson = `{
-  "name": "JSON Viewer Pro",
+  "name": "JsonNavigator Pro",
   "version": "1.0.0",
   "description": "A high-performance JSON viewer for developers",
   "features": [
@@ -44,7 +44,8 @@ const sampleJson = `{
 const Index: React.FC = () => {
   const { rawJson, parsedResult, handleJsonChange, formatJson, minifyJson, setRawJson } = useJsonParser();
   const [activeTab, setActiveTab] = useState<string>('tree');
-  
+  const [currentResultIndex, setCurrentResultIndex] = useState(0);
+
   const {
     searchQuery,
     setSearchQuery,
@@ -54,6 +55,21 @@ const Index: React.FC = () => {
     setSearchType,
     results,
   } = useJsonSearch(parsedResult?.data);
+
+  // Reset index when search changes
+  React.useEffect(() => {
+    setCurrentResultIndex(0);
+  }, [searchQuery, searchType, useRegex]);
+
+  const handleNextResult = useCallback(() => {
+    if (results.length === 0) return;
+    setCurrentResultIndex((prev) => (prev + 1) % results.length);
+  }, [results.length]);
+
+  const handlePrevResult = useCallback(() => {
+    if (results.length === 0) return;
+    setCurrentResultIndex((prev) => (prev - 1 + results.length) % results.length);
+  }, [results.length]);
 
   const handleFormat = useCallback(() => {
     const formatted = formatJson(2);
@@ -98,7 +114,7 @@ const Index: React.FC = () => {
   return (
     <div className="flex flex-col h-screen bg-background">
       <Header />
-      
+
       <div className="flex-1 flex overflow-hidden">
         {/* Left Panel - Editor */}
         <div className="w-1/2 flex flex-col border-r border-border">
@@ -116,7 +132,7 @@ const Index: React.FC = () => {
               isValid={parsedResult?.isValid ?? false}
             />
           </div>
-          
+
           <div className="flex-1 overflow-hidden">
             <JsonEditor
               value={rawJson}
@@ -135,7 +151,7 @@ const Index: React.FC = () => {
 
         {/* Right Panel - Viewer/Stats */}
         <div className="w-1/2 flex flex-col bg-card/20">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 h-full">
             <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-card/30">
               <TabsList className="bg-secondary/50">
                 <TabsTrigger value="tree" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
@@ -160,16 +176,20 @@ const Index: React.FC = () => {
                   searchType={searchType}
                   onSearchTypeChange={setSearchType}
                   results={results}
+                  onNext={handleNextResult}
+                  onPrev={handlePrevResult}
+                  currentResultIndex={currentResultIndex}
                 />
               </div>
             )}
 
-            <TabsContent value="tree" className="flex-1 m-0 overflow-hidden">
+            <TabsContent value="tree" className="flex-1 m-0 overflow-hidden h-full flex flex-col">
               {parsedResult?.isValid && parsedResult.data ? (
-                <JsonTreeViewer 
-                  data={parsedResult.data} 
+                <JsonTreeViewer
+                  data={parsedResult.data}
                   className="h-full"
                   searchHighlight={searchQuery}
+                  focusedResultPath={results[currentResultIndex]?.path}
                 />
               ) : (
                 <div className="flex items-center justify-center h-full text-muted-foreground">

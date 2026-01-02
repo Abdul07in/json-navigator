@@ -13,6 +13,7 @@ interface JsonTreeNodeProps {
   expandedPaths: Set<string>;
   onToggle: (path: string) => void;
   searchHighlight?: string;
+  focusedResultPath?: string | null;
 }
 
 const getValueType = (value: unknown): string => {
@@ -46,6 +47,7 @@ export const JsonTreeNode: React.FC<JsonTreeNodeProps> = memo(({
   expandedPaths,
   onToggle,
   searchHighlight,
+  focusedResultPath,
 }) => {
   const [copied, setCopied] = useState(false);
   const type = getValueType(value);
@@ -68,15 +70,15 @@ export const JsonTreeNode: React.FC<JsonTreeNodeProps> = memo(({
 
   const handleCopyValue = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    const textValue = type === 'object' || type === 'array' 
+    const textValue = type === 'object' || type === 'array'
       ? JSON.stringify(value, null, 2)
       : String(value);
     navigator.clipboard.writeText(textValue);
     toast.success('Value copied to clipboard');
   }, [value, type]);
 
-  const isValueHighlighted = searchHighlight && 
-    !isExpandable && 
+  const isValueHighlighted = searchHighlight &&
+    !isExpandable &&
     String(value).toLowerCase().includes(searchHighlight.toLowerCase());
 
   const renderValue = () => {
@@ -121,14 +123,17 @@ export const JsonTreeNode: React.FC<JsonTreeNodeProps> = memo(({
 
   const children = getChildren();
   const isKeyHighlighted = searchHighlight && String(keyName).toLowerCase().includes(searchHighlight.toLowerCase());
+  const isFocused = focusedResultPath === path;
 
   return (
     <div className="animate-fade-in">
       <div
+        data-path={path}
         className={cn(
           'json-line group flex items-center gap-1 cursor-pointer',
           'hover:bg-accent/50 rounded transition-colors',
-          isKeyHighlighted && 'bg-warning/20'
+          isKeyHighlighted && 'bg-warning/20',
+          isFocused && 'bg-primary/10 ring-1 ring-primary/30'
         )}
         style={{ paddingLeft: `${depth * 16 + 8}px` }}
         onClick={handleToggle}
@@ -193,6 +198,7 @@ export const JsonTreeNode: React.FC<JsonTreeNodeProps> = memo(({
               expandedPaths={expandedPaths}
               onToggle={onToggle}
               searchHighlight={searchHighlight}
+              focusedResultPath={focusedResultPath}
             />
           ))}
         </div>
