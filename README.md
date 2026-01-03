@@ -1,73 +1,93 @@
-# Welcome to your Lovable project
+# JSON Navigator
 
-## Project info
+A modern, feature-rich JSON visualization and comparison tool built with React, TypeScript, and Tailwind CSS.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 🚀 Features
 
-## How can I edit this code?
+- **JSON Visualization**: Browse complex JSON structures with an interactive, collapsible tree view.
+- **JSON Comparison**: Compare two JSON objects to identify differences (diffing) with visual highlights.
+- **Modern UI**: Clean and responsive interface built with Shadcn UI and Tailwind CSS.
+- **Dark Mode Support**: Seamlessly switch between light and dark themes.
+- **Input Flexibility**: Paste JSON directly or potentially load from files (depending on implementation details).
+- **Client-Side Processing**: All processing happens in your browser - your data never leaves your device.
 
-There are several ways of editing your application.
+## 🛠️ Tech Stack
 
-**Use Lovable**
+- **Framework**: [React](https://react.dev/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components**: [Radix UI](https://www.radix-ui.com/) (via Shadcn UI)
+- **Routing**: [React Router](https://reactrouter.com/)
+- **State Management/Data Fetching**: [TanStack Query](https://tanstack.com/query)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Charts**: [Recharts](https://recharts.org/)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## 📦 Installation
 
-Changes made via Lovable will be committed automatically to this repo.
+1.  **Clone the repository**
 
-**Use your preferred IDE**
+    ```bash
+    git clone https://github.com/Abdul07in/json-navigator.git
+    cd json-navigator
+    ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+2.  **Install dependencies**
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+    Using npm:
+    ```bash
+    npm install
+    ```
+    
+    Or using Bun (recommended if available):
+    ```bash
+    bun install
+    ```
 
-Follow these steps:
+3.  **Start the development server**
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+    ```bash
+    npm run dev
+    # or
+    bun run dev
+    ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+4.  **Open the app**
 
-# Step 3: Install the necessary dependencies.
-npm i
+    Visit `http://localhost:8080/json-navigator/` in your browser.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+## 🚀 Deployment
+
+The application is deployed using GitHub Pages.
+
+**Live URL**: [https://Abdul07in.github.io/json-navigator/](https://Abdul07in.github.io/json-navigator/)
+
+### Deploying Updates
+
+To deploy updates to GitHub Pages:
+
+1.  Make your changes and commit them to the `main` branch.
+2.  Push to GitHub.
+3.  Go to the "Actions" tab in your GitHub repository.
+4.  Select the "Manual Deploy to GitHub Pages" workflow.
+5.  Click "Run workflow".
+
+Alternatively, you can use the GitHub CLI:
+
+```bash
+gh workflow run deploy.yml
 ```
 
-**Edit a file directly in GitHub**
+## 🤝 Contributing
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-**Use GitHub Codespaces**
+1.  Fork the project
+2.  Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 📄 License
 
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+This project is open source and available under the [MIT License](LICENSE).
